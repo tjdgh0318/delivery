@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyHandler{
+
+    @Autowired
+    DeliveryRepository deliveryRepository;
+
     @StreamListener(KafkaProcessor.INPUT)
     public void onStringEventListener(@Payload String eventString){
 
@@ -19,7 +23,12 @@ public class PolicyHandler{
     public void wheneverPaid_StartDelivery(@Payload Paid paid){
 
         if(paid.isMe()){
-            System.out.println("##### listener StartDelivery : " + paid.toJson());
+            System.out.println("##### StartDelivery : " + paid.toJson());
+
+            Delivery delivery = new Delivery();
+            delivery.setOrderId(paid.getOrderId());
+
+            deliveryRepository.save(delivery);
         }
     }
 
