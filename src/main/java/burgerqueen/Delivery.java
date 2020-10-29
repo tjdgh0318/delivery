@@ -17,8 +17,24 @@ public class Delivery {
     private int qty;
     private String State="Preparing";
 
+    @PostPersist
+    public void onPostPersist(){
+        Delivered delivered = new Delivered();
+        BeanUtils.copyProperties(this, delivered);
+        delivered.publishAfterCommit();
+
+        System.out.println("##### Delivery Pub : " + delivered.toJson());
+    }
+
     @PostUpdate
     public void onPostUpdate(){
+
+        this.setState("Complete");
+        Delivered delivered = new Delivered();
+        BeanUtils.copyProperties(this, delivered);
+        delivered.publishAfterCommit();
+
+        System.out.println("##### Delivery Pub : " + delivered.toJson());
 
     }
 
